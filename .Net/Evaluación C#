@@ -1,0 +1,124 @@
+using System;
+
+public class Evaluacion
+{
+    public static void Main()
+    {
+        Credito credito = new Credito(1000000);
+
+        Console.WriteLine("Créditos");
+        while (true)
+        {
+            Console.WriteLine("Menú");
+            Console.WriteLine("1. Registrar valor de compras");
+            Console.WriteLine("2. Realizar avances");
+            Console.WriteLine("3. Pagar crédito");
+            Console.WriteLine("4. Consultar cupo crédito y saldo por pagar");
+            Console.WriteLine("5. Consultar total puntos");
+            Console.WriteLine("6. Salir");
+
+            int opcion = Convert.ToInt32(Console.ReadLine());
+            switch (opcion)
+            {
+                case 1:
+                    Console.WriteLine("Ingrese el valor de la compra que desea registrar: ");
+                    double valorCompra = double.Parse(Console.ReadLine());
+                    credito.RegistrarValorCompras(valorCompra);
+                    break;
+
+                case 2:
+                    Console.WriteLine("Ingrese el valor que desea adelantar: ");
+                    double valorAvance = double.Parse(Console.ReadLine());
+                    credito.RegistrarAvances(valorAvance);
+                    break;
+
+                case 3:
+                    Console.WriteLine("Ingrese el valor que desea pagar del crédito: ");
+                    double valorPagar = double.Parse(Console.ReadLine());
+                    credito.PagarCredito(valorPagar);
+                    break;
+
+                case 4:
+                    Console.WriteLine($"Cupo total del crédito: {credito.CupoTotalCredito}");
+                    Console.WriteLine($"Saldo a Pagar: {credito.SaldoPagar}");
+                    break;
+
+                case 5:
+                    Console.WriteLine($"Puntos totales: {credito.TotalPuntos()}");
+                    break;
+
+                case 6:
+                    Environment.Exit(0);
+                    break;
+
+                default:
+                    Console.WriteLine("Opción no válida :(. Intenta de nuevo.");
+                    break;
+            }
+        }
+    }
+}
+
+public class Credito
+{
+    private double saldoPagar = 0;
+    private double cupoTotalCredito = 0;
+    private double totalPuntos = 0;
+
+    public double CupoTotalCredito { get { return cupoTotalCredito; } }
+    public double SaldoPagar { get { return saldoPagar; } }
+
+    public Credito(double cupoCredito)
+    {
+        cupoTotalCredito = cupoCredito;
+    }
+
+    public void RegistrarValorCompras(double valorCompra)
+    {
+        if (valorCompra > 0 && valorCompra <= cupoTotalCredito - saldoPagar)
+        {
+            saldoPagar += valorCompra;
+
+            if (valorCompra >= 100000)
+            {
+                totalPuntos += valorCompra * 0.01;
+            }
+            Console.WriteLine("Compra registrada con éxito :D");
+        }
+        else
+        {
+            Console.WriteLine("No fue posible registrar la compra :(");
+        }
+    }
+
+    public void RegistrarAvances(double valorAvance)
+    {
+        if (valorAvance > 0 && valorAvance <= cupoTotalCredito - saldoPagar)
+        {
+            saldoPagar += valorAvance;
+            Console.WriteLine($"Valor de avance registrado con éxito :D \n No olvides que ahora tu saldo a pagar es de: {saldoPagar}");
+        }
+        else
+        {
+            Console.WriteLine("No se pudo realizar el avance :(");
+        }
+    }
+
+    public void PagarCredito(double valorPagar)
+    {
+        if (valorPagar > 0 && valorPagar <= saldoPagar)
+        {
+            saldoPagar -= valorPagar;
+            Console.WriteLine("Pago realizado correctamente :D");
+        }
+        else
+        {
+            Console.WriteLine("No se pudo realizar el pago :( ");
+        }
+    }
+
+    public double TotalPuntos()
+    {
+        return totalPuntos;
+    }
+}
