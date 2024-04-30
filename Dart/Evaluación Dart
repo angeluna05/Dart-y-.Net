@@ -1,0 +1,145 @@
+import 'dart:io';
+
+class Cuenta {
+  String titular;
+  double saldo;
+  int numCuenta;
+
+  //Constructor
+  Cuenta(this.titular, this.saldo, this.numCuenta);
+
+  @override
+  String toString() {
+    return "Titular: ${titular}, saldo: ${saldo}";
+  }
+}
+
+void main() {
+  List<Cuenta> cuentas = [];
+
+  while (true) {
+    print("Menú");
+    print("1. Registar cuenta: ");
+    print("2. Consignar dinero: ");
+    print("3. Transferir dinero: ");
+    print("4. Retirar dinero: ");
+    print("5. Salir: ");
+
+    int opcion = int.parse(stdin.readLineSync()!);
+
+    if (opcion > 5 || opcion < 1 || opcion == null) {
+      print("Digite una opción correcta :(");
+      continue;
+    }
+
+    switch (opcion) {
+      case 1:
+        registrarCuenta(cuentas);
+        break;
+      case 2:
+        consignarDinero(cuentas);
+        break;
+      case 3:
+        transferirDinero(cuentas);
+        break;
+      case 4:
+        retirarDinero(cuentas);
+        break;
+      case 5:
+        print("Adiós :)");
+        return;
+    }
+  }
+}
+
+void registrarCuenta(List<Cuenta> cuentas) {
+  print("Ingrese el número de cuenta que desea registrar");
+  int numCuenta = int.parse(stdin.readLineSync()!);
+  print("Ingrese el nombre del titular de la cuenta");
+  String titular = stdin.readLineSync()!;
+  double saldoInicial = 0;
+  if (cuentas.any((cuenta) => cuenta.titular == titular)) {
+    print("La cuenta ya está registrada");
+    return;
+  } else {
+    cuentas.add(Cuenta(titular, saldoInicial, numCuenta));
+    print("Cuenta creada con éxito :D. Su saldo es ${saldoInicial}");
+  }
+}
+
+void consignarDinero(List<Cuenta> cuentas) {
+  print("Ingrese el número de cuenta al cual va a realizar la consignación: ");
+  int numCuenta = int.parse(stdin.readLineSync()!);
+
+  var cuenta = cuentas.firstWhere((cuenta) => cuenta.numCuenta == numCuenta);
+
+  if (cuenta == null) {
+    print("Cuenta no registrada");
+    return;
+  }
+
+  print("Ingrese la cantidad que desea consignar: ");
+  double cantConsignar = double.parse(stdin.readLineSync()!);
+
+  if (cantConsignar <= 0) {
+    print("La cantidad a consignar debe ser mayor a 0");
+    return;
+  }
+  cuenta.saldo += cantConsignar;
+  print("Consignación exitosa :D");
+}
+
+void transferirDinero(List<Cuenta> cuentas) {
+  print("Ingrese el número de la cuenta desde la cual desea transferir: ");
+  int numCuentaOrigen = int.parse(stdin.readLineSync()!);
+
+  var cuentaOrigen = cuentas.firstWhere(
+      (cuenta) => cuenta.numCuenta == numCuentaOrigen);
+  if (cuentaOrigen == null) {
+    print("La cuenta desde la que deseas transferir no está registrada :(");
+    return;
+  }
+
+  print("Ingrese el número de la cuenta a la que desea transferir: ");
+  int numCuentaDestino = int.parse(stdin.readLineSync()!);
+
+  var cuentaDestino = cuentas.firstWhere(
+      (cuenta) => cuenta.numCuenta == numCuentaDestino);
+  if (cuentaDestino == null) {
+    print('La cuenta de destino no está registrada. :(');
+    return;
+  }
+
+  print("Ingrese la cantidad a transferir: ");
+  double cantTranferir = double.parse(stdin.readLineSync()!);
+
+  if (cantTranferir <= 0 || cantTranferir > cuentaOrigen.saldo) {
+    print("No fue posible realizar la transferencia :(");
+    return;
+  }
+
+  cuentaOrigen.saldo -= cantTranferir;
+  cuentaDestino.saldo += cantTranferir;
+  print("Transferencia exitosa :D");
+}
+
+void retirarDinero(List<Cuenta> cuentas) {
+  print("Ingrese el número de cuenta desde la que desea retirar: ");
+  int numCuenta = int.parse(stdin.readLineSync()!);
+
+  var cuenta = cuentas.firstWhere((cuenta) => cuenta.numCuenta == numCuenta);
+  if (cuenta == null) {
+    print("La cuenta no está registrada :(");
+    return;
+  }
+
+  print("Ingrese la cantidad que desea retirar: ");
+  double cantRetirar = double.parse(stdin.readLineSync()!);
+
+  if (cantRetirar <= 0 || cantRetirar > cuenta.saldo) {
+    print("Saldo insuficiente. No se pudo realizar el retiro :(");
+    return;
+  }
+  cuenta.saldo -= cantRetirar;
+  print("Retiro exitoso :D");
+}
